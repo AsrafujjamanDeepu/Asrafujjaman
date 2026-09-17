@@ -37,19 +37,25 @@ const skillGroups = [
   ] },
   { category: "Backend", items: [
     { name: "ASP.NET Core", tier: "core" }, { name: "Web API", tier: "core" }, { name: "Entity Framework Core", tier: "core" },
-    { name: "ASP.NET MVC", tier: "core" }, { name: "ADO.NET", tier: "core" }, { name: "Node.js", tier: "core" }
+    { name: "ASP.NET MVC", tier: "core" }, { name: "ADO.NET", tier: "core" }, { name: "Node.js", tier: "core" },
+    { name: "Express.js", tier: "proficient" }
   ] },
   { category: "Frontend", items: [
     { name: "React", tier: "core" }, { name: "Angular", tier: "core" }, { name: "Next.js", tier: "core" },
     { name: "Razor Pages", tier: "core" }, { name: "Tailwind CSS", tier: "proficient" }, { name: "Bootstrap", tier: "core" },
-    { name: ".NET MAUI", tier: "proficient" }, { name: "HTML & CSS", tier: "core" }
+    { name: ".NET MAUI", tier: "proficient" }, { name: "HTML & CSS", tier: "core" }, { name: "Blazor", tier: "proficient" }
   ] },
   { category: "Data", items: [
     { name: "SQL Server", tier: "core" }, { name: "MySQL", tier: "proficient" }, { name: "MongoDB", tier: "core" }
   ] },
+  { category: "Web Technologies", items: [
+    { name: "Ajax", tier: "proficient" }, { name: "jQuery", tier: "proficient" },
+    { name: "WebSockets", tier: "proficient" }, { name: "SignalR", tier: "proficient" }
+  ] },
   { category: "Tools & APIs", items: [
     { name: "Git & GitHub", tier: "core" }, { name: "REST APIs", tier: "core" }, { name: "Swagger", tier: "core" },
-    { name: "Postman", tier: "core" }, { name: "Visual Studio", tier: "core" }, { name: "SAP Crystal Reports", tier: "core" }
+    { name: "Postman", tier: "core" }, { name: "Visual Studio", tier: "core" }, { name: "SAP Crystal Reports", tier: "core" },
+    { name: "Docker", tier: "proficient" }
   ] }
 ];
 
