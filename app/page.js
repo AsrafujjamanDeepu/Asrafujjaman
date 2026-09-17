@@ -84,21 +84,29 @@ export default function Home() {
     const accessKey = process.env.NEXT_PUBLIC_WEB3FORMS_ACCESS_KEY;
     if (!accessKey) { setStatus("The contact form is not configured yet."); return; }
     setSending(true); setStatus("");
-    const form = new FormData(event.currentTarget);
-    const payload = Object.fromEntries(form);
-    payload.access_key = accessKey;
-    payload.subject = "New portfolio message for Asrafujjaman";
-    payload.from_name = "Asrafujjaman Portfolio";
+    const form = event.currentTarget;
+    const formData = new FormData(form);
+    formData.append("access_key", accessKey);
+    formData.append("subject", "New portfolio message for Asrafujjaman");
+    formData.append("from_name", "Asrafujjaman Portfolio");
     try {
+      // Sending FormData directly (no manual Content-Type) keeps this a CORS-safelisted
+      // "simple request" - JSON.stringify + Content-Type: application/json forces a
+      // preflight, and Web3Forms can then process the submission server-side (which is
+      // why the email still arrives) while the browser blocks the client from reading
+      // the response, so the UI shows this exact "connection failed" message.
       const response = await fetch("https://api.web3forms.com/submit", {
         method: "POST",
-        headers: { "Content-Type": "application/json", Accept: "application/json" },
-        body: JSON.stringify(payload)
+        headers: { Accept: "application/json" },
+        body: formData
       });
       const result = await response.json();
-      if (response.ok && result.success) { setStatus("Message sent - thanks for reaching out."); event.currentTarget.reset(); }
+      if (response.ok && result.success) { setStatus("Message sent - thanks for reaching out."); form.reset(); }
       else setStatus(result.message || "Web3Forms could not send the message. Please try again.");
-    } catch { setStatus("The connection failed before the message could be sent. Please try again."); }
+    } catch (error) {
+      console.error("Web3Forms submission failed:", error);
+      setStatus("The connection failed before the message could be sent. Please try again.");
+    }
     finally { setSending(false); }
   }
 
