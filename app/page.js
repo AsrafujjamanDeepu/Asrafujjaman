@@ -1,6 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { FaGithub, FaLinkedinIn, FaFacebookF, FaWhatsapp, FaTelegramPlane } from "react-icons/fa";
+import SkillConstellation from "../components/SkillConstellation";
 
 const projects = [
   { title: "Ticket Portal", type: "Full-stack booking platform", description: "A bus-ticket booking experience combining RESTful APIs with a responsive, user-focused interface.", tags: ["C#", "ASP.NET Core API", "EF Core", "Angular", "React"], mark: "01" },
@@ -11,7 +13,53 @@ const projects = [
   { title: "Study Tracker", type: "Desktop learning tool", description: "A focused Python tool for organizing study sessions and tracking momentum.", tags: ["Python", "Tkinter", "Canvas"], mark: "06" }
 ];
 
-const skills = ["C", "C#", "JavaScript", "TypeScript", "Python", "SQL", "ASP.NET Core", "Web API", "EF Core", "ADO.NET", "React", "Next.js", "Angular", "Tailwind CSS", "Razor Pages", "SQL Server", "MySQL", "MongoDB", "Git", "GitHub", "Swagger", "Postman"];
+// Skills called out as a specialization get the "core" tier; everything
+// else that's still hands-on experience gets "proficient". Used by both
+// the hero constellation and the Toolbox section below so the two stay
+// in sync.
+const heroSkills = [
+  { name: "React", tier: "core" },
+  { name: "TypeScript", tier: "core" },
+  { name: "ASP.NET Core", tier: "core" },
+  { name: "Next.js", tier: "core" },
+  { name: "C#", tier: "core" },
+  { name: "MongoDB", tier: "core" },
+  { name: "Angular", tier: "core" },
+  { name: "SQL Server", tier: "core" },
+  { name: "Web API", tier: "core" },
+  { name: "EF Core", tier: "core" }
+];
+
+const skillGroups = [
+  { category: "Languages", items: [
+    { name: "C#", tier: "core" }, { name: "SQL", tier: "core" }, { name: "TypeScript", tier: "core" },
+    { name: "JavaScript", tier: "proficient" }, { name: "Python", tier: "proficient" }, { name: "C", tier: "core" }
+  ] },
+  { category: "Backend", items: [
+    { name: "ASP.NET Core", tier: "core" }, { name: "Web API", tier: "core" }, { name: "Entity Framework Core", tier: "core" },
+    { name: "ASP.NET MVC", tier: "core" }, { name: "ADO.NET", tier: "core" }, { name: "Node.js", tier: "core" }
+  ] },
+  { category: "Frontend", items: [
+    { name: "React", tier: "core" }, { name: "Angular", tier: "core" }, { name: "Next.js", tier: "core" },
+    { name: "Razor Pages", tier: "core" }, { name: "Tailwind CSS", tier: "proficient" }, { name: "Bootstrap", tier: "core" },
+    { name: ".NET MAUI", tier: "proficient" }, { name: "HTML & CSS", tier: "core" }
+  ] },
+  { category: "Data", items: [
+    { name: "SQL Server", tier: "core" }, { name: "MySQL", tier: "proficient" }, { name: "MongoDB", tier: "core" }
+  ] },
+  { category: "Tools & APIs", items: [
+    { name: "Git & GitHub", tier: "core" }, { name: "REST APIs", tier: "core" }, { name: "Swagger", tier: "core" },
+    { name: "Postman", tier: "core" }, { name: "Visual Studio", tier: "core" }, { name: "SAP Crystal Reports", tier: "core" }
+  ] }
+];
+
+const socialLinks = [
+  { name: "GitHub", href: "https://github.com/AsrafujjamanDeepu", Icon: FaGithub },
+  { name: "LinkedIn", href: "https://www.linkedin.com/in/asrafujjaman", Icon: FaLinkedinIn },
+  { name: "Facebook", href: "https://www.facebook.com/ZamanDeepu/", Icon: FaFacebookF },
+  { name: "WhatsApp", href: "https://wa.me/8801521200643", Icon: FaWhatsapp },
+  { name: "Telegram", href: "https://t.me/+8801521200643", Icon: FaTelegramPlane }
+];
 
 function Arrow() { return <span aria-hidden="true" className="arrow">↗</span>; }
 
@@ -72,7 +120,7 @@ export default function Home() {
         <p className="hero-intro">I&apos;m Asrafujjaman, a software developer crafting reliable full-stack applications with .NET, React, and thoughtful engineering.</p>
         <div className="hero-actions"><a className="button primary" href="#work">Explore my work <Arrow /></a><a className="text-link" href="https://github.com/AsrafujjamanDeepu" target="_blank" rel="noreferrer">GitHub <Arrow /></a></div>
       </div>
-      <div className="portrait-wrap reveal"><div className="portrait-ring" /><div className="portrait-card"><img src="/asrafujjaman-portrait.jpg" alt="Asrafujjaman" /><div className="portrait-caption"><span>Software developer</span><b>Dhaka, Bangladesh</b></div></div><div className="orbit orbit-one">.NET</div><div className="orbit orbit-two">REACT</div><div className="orbit orbit-three">C#</div><div className="orbit orbit-four">SQL</div><div className="orbit orbit-five">NODE</div><div className="orbit orbit-six">TS</div><div className="orbit orbit-seven">ANGULAR</div></div>
+      <div className="portrait-wrap reveal"><div className="portrait-ring" /><div className="portrait-card"><img src="/asrafujjaman-portrait.jpg" alt="Asrafujjaman" /><div className="portrait-caption"><span>Software developer</span><b>Dhaka, Bangladesh</b></div></div><SkillConstellation skills={heroSkills} /></div>
       <div className="hero-footer"><span>Scroll to discover</span><div className="scroll-line" /><span>01 / 05</span></div>
     </section>
 
@@ -94,12 +142,24 @@ export default function Home() {
       {live.repos.length ? live.repos.map((repo) => <a className="repo-card" href={repo.url} target="_blank" rel="noreferrer" key={repo.url}><div><span className="repo-dot" /><p>{repo.language}</p></div><h3>{repo.name}</h3><p className="repo-description">{repo.description}</p><footer><span>★ {repo.stars}</span><span>View repo <Arrow /></span></footer></a>) : <div className="repo-placeholder reveal"><span className="pulse-dot" /> Loading live GitHub projects...</div>}
     </div></section>
 
-    <section id="about" className="about section"><div className="shell about-grid"><div className="about-copy reveal"><p className="eyebrow">A little about me</p><h2>I build with <em>curiosity</em> and care.</h2><p>I&apos;m a .NET and full-stack developer who enjoys the full journey: designing APIs, shaping data, and making interfaces feel effortless to use.</p><p>My background in intensive cross-platform development training, paired with practical work across MEAN, MERN, and .NET stacks, keeps me adaptable and grounded in real delivery.</p><a className="text-link" href="https://www.linkedin.com/in/asrafujjaman" target="_blank" rel="noreferrer">More on LinkedIn <Arrow /></a></div><div className="stats reveal"><div><strong>788<span>h</span></strong><p>intensive development training</p></div><div><strong>3<span>×</span></strong><p>full-stack technology ecosystems</p></div><div><strong>8<span>+</span></strong><p>projects brought from idea to build</p></div></div></div></section>
+    <section id="about" className="about section"><div className="shell about-grid"><div className="about-copy reveal"><p className="eyebrow">A little about me</p><h2>I build with <em>curiosity</em> and care.</h2><p>I&apos;m a .NET and full-stack developer who enjoys the full journey: designing APIs, shaping data, and making interfaces feel effortless to use.</p><p>My background in intensive cross-platform development training, paired with practical work across MEAN, MERN, and .NET stacks, keeps me adaptable and grounded in real delivery.</p><a className="text-link" href="https://www.linkedin.com/in/asrafujjaman" target="_blank" rel="noreferrer">More on LinkedIn <Arrow /></a></div><div className="stats reveal"><div><strong>788<span>h</span></strong><p>intensive development training</p></div><div><strong>3<span>×</span></strong><p>full-stack technology ecosystems</p></div><div><strong>10<span>+</span></strong><p>projects brought from idea to build</p></div></div></div></section>
 
-    <section className="stack section shell"><div className="section-heading compact reveal"><p className="eyebrow">Toolbox</p><h2>The stack behind<br />the <em>craft.</em></h2></div><div className="skill-cloud reveal">{skills.map((skill, index) => <span className={`skill skill-${index % 4}`} key={skill}>{skill}</span>)}</div><div className="skill-detail reveal"><div><b>Backend</b><p>ASP.NET MVC & Core · Web API · Entity Framework · ADO.NET · Node.js</p></div><div><b>Frontend</b><p>React · Next.js · Angular · TypeScript · Tailwind CSS · Razor</p></div><div><b>Data & tools</b><p>SQL Server · MySQL · MongoDB · Git · Postman · Swagger</p></div></div></section>
+    <section className="stack section shell">
+      <div className="section-heading compact reveal">
+        <p className="eyebrow">Toolbox</p>
+        <h2>The stack behind<br />the <em>craft.</em></h2>
+        <div className="stack-legend"><span><i className="legend-dot core" />Specializing in</span><span><i className="legend-dot proficient" />Also building with</span></div>
+      </div>
+      <div className="skill-groups reveal">
+        {skillGroups.map((group) => <div className="skill-group" key={group.category}>
+          <h3>{group.category}</h3>
+          <div className="skill-pills">{group.items.map((item) => <span className={`pill pill-${item.tier}`} key={item.name}>{item.name}</span>)}</div>
+        </div>)}
+      </div>
+    </section>
 
     <section id="contact" className="contact"><div className="shell contact-grid"><div className="contact-intro reveal"><p className="eyebrow">Have a project in mind?</p><h2>Let&apos;s make something<br /><em>great together.</em></h2><p>Whether it&apos;s a product idea, a collaboration, or an opportunity, my inbox is open.</p><a className="email" href="mailto:asrafujjamandeepu@gmail.com">asrafujjamandeepu@gmail.com <Arrow /></a></div><form className="contact-form reveal" onSubmit={submitForm}><label>Name<input name="name" required placeholder="Your name" /></label><label>Email<input name="email" type="email" required placeholder="you@company.com" /></label><label>Message<textarea name="message" required placeholder="Tell me a little about your project..." rows="5" /></label><input type="checkbox" className="botcheck" name="botcheck" tabIndex="-1" autoComplete="off" /><button className="button primary" disabled={sending}>{sending ? "Sending..." : "Send message"} <Arrow /></button>{status && <p className="form-status" role="status">{status}</p>}</form></div></section>
 
-    <footer className="footer shell"><a className="logo" href="#top">Asrafujjaman<span>.</span></a><p>Designed & built by Asrafujjaman</p><div><a href="https://github.com/AsrafujjamanDeepu" target="_blank" rel="noreferrer">GitHub</a><a href="https://www.linkedin.com/in/asrafujjaman" target="_blank" rel="noreferrer">LinkedIn</a></div></footer>
+    <footer className="footer shell"><a className="logo" href="#top">Asrafujjaman<span>.</span></a><p>Designed & built by Asrafujjaman</p><div className="social-links">{socialLinks.map(({ name, href, Icon }) => <a href={href} target="_blank" rel="noreferrer" key={name} aria-label={name} title={name}><Icon /></a>)}</div></footer>
   </main>;
 }
