@@ -67,25 +67,6 @@ public/
   asrafujjaman-portrait.jpg
 ```
 
-## Deploy to Vercel
-
-1. Push this repository to GitHub (already at [AsrafujjamanDeepu/Asrafujjaman](https://github.com/AsrafujjamanDeepu/Asrafujjaman)).
-2. Import the repository into [Vercel](https://vercel.com/new).
-3. Add `NEXT_PUBLIC_WEB3FORMS_ACCESS_KEY`, `WEATHERAPI_KEY`, and optionally `GITHUB_TOKEN` under **Project Settings → Environment Variables**.
-4. Deploy — Vercel detects Next.js and pnpm automatically.
-5. Check it live at **[asrafujjaman.vercel.app](https://asrafujjaman.vercel.app/)**.
-
-## Git quick start
-
-```bash
-git init
-git add .
-git commit -m "Create personal portfolio"
-git branch -M main
-git remote add origin https://github.com/AsrafujjamanDeepu/Asrafujjaman.git
-git push -u origin main
-```
-
 ## Author
 
 **Asrafujjaman** — Software Developer, .NET & Full-Stack Development, Dhaka, Bangladesh
