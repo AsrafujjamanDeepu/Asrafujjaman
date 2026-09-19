@@ -3,14 +3,17 @@
 import { useEffect, useState } from "react";
 import { FaGithub, FaLinkedinIn, FaFacebookF, FaWhatsapp, FaTelegramPlane } from "react-icons/fa";
 import SkillConstellation from "../components/SkillConstellation";
+import ContributionHeatmap from "../components/ContributionHeatmap";
+import ApodCard from "../components/ApodCard";
+import FunCards from "../components/FunCards";
 
 const projects = [
-  { title: "Ticket Portal", type: "Full-stack booking platform", description: "A bus-ticket booking experience combining RESTful APIs with a responsive, user-focused interface.", tags: ["C#", "ASP.NET Core API", "EF Core", "Angular", "React"], mark: "01" },
-  { title: "Assignment Submission System", type: "Academic workflow platform", description: "A role-based application for managing assignments and submissions across academic teams.", tags: ["Next.js", "TypeScript", "React", "MongoDB", "ASP.NET Core"], mark: "02" },
-  { title: "Virtual Mart", type: "E-commerce platform", description: "A full-stack online marketplace with secure authentication and real-time capabilities.", tags: ["Node.js", "MongoDB", "WebSocket", "JavaScript"], mark: "03" },
-  { title: "Clinic Management System", type: "Operations dashboard", description: "A database-driven system for streamlining patient appointments and clinic workflows.", tags: ["ASP.NET Core", "SQL Server", "Razor", "EF Core"], mark: "04" },
-  { title: "Student Management System", type: "Data management app", description: "A clean, practical student information system powered by a focused Razor interface.", tags: ["ASP.NET MVC", "Entity Framework", "SQL Server"], mark: "05" },
-  { title: "Study Tracker", type: "Desktop learning tool", description: "A focused Python tool for organizing study sessions and tracking momentum.", tags: ["Python", "Tkinter", "Canvas"], mark: "06" }
+  { slug: "ticket-portal", title: "Ticket Portal", type: "Full-stack booking platform", description: "A bus-ticket booking experience combining RESTful APIs with a responsive, user-focused interface.", tags: ["C#", "ASP.NET Core API", "EF Core", "Angular", "React"], mark: "01" },
+  { slug: "assignment-submission", title: "Assignment Submission System", type: "Academic workflow platform", description: "A role-based application for managing assignments and submissions across academic teams.", tags: ["Next.js", "TypeScript", "React", "MongoDB", "ASP.NET Core"], mark: "02" },
+  { slug: "virtual-mart", title: "Virtual Mart", type: "E-commerce platform", description: "A full-stack online marketplace with secure authentication and real-time capabilities.", tags: ["Node.js", "MongoDB", "WebSocket", "JavaScript"], mark: "03" },
+  { slug: "clinic-management", title: "Clinic Management System", type: "Operations dashboard", description: "A database-driven system for streamlining patient appointments and clinic workflows.", tags: ["ASP.NET Core", "SQL Server", "Razor", "EF Core"], mark: "04" },
+  { slug: "student-management", title: "Student Management System", type: "Data management app", description: "A clean, practical student information system powered by a focused Razor interface.", tags: ["ASP.NET MVC", "Entity Framework", "SQL Server"], mark: "05" },
+  { slug: "study-tracker", title: "Study Tracker", type: "Desktop learning tool", description: "A focused Python tool for organizing study sessions and tracking momentum.", tags: ["Python", "Tkinter", "Canvas"], mark: "06" }
 ];
 
 // Skills called out as a specialization get the "core" tier; everything
@@ -74,6 +77,7 @@ export default function Home() {
   const [status, setStatus] = useState("");
   const [sending, setSending] = useState(false);
   const [live, setLive] = useState({ repos: [], weather: null });
+  const [photos, setPhotos] = useState({});
 
   useEffect(() => {
     const observer = new IntersectionObserver((entries) => entries.forEach((entry) => entry.isIntersecting && entry.target.classList.add("in-view")), { threshold: 0.12 });
@@ -83,6 +87,12 @@ export default function Home() {
 
   useEffect(() => {
     fetch("/api/live").then((response) => response.json()).then(setLive).catch(() => undefined);
+  }, []);
+
+  // Themed stock photos for the project cards (needs UNSPLASH_ACCESS_KEY or PEXELS_API_KEY;
+  // without a key this returns nothing and the cards keep their pastel look).
+  useEffect(() => {
+    fetch("/api/project-images").then((response) => response.json()).then((data) => setPhotos(data.images || {})).catch(() => undefined);
   }, []);
 
   async function submitForm(event) {
@@ -149,12 +159,17 @@ export default function Home() {
 
     <section id="work" className="work section shell">
       <div className="section-heading reveal"><p className="eyebrow">Selected work</p><h2>Ideas, turned into<br /><em>working products.</em></h2><p>From server-side architecture to responsive front ends, I enjoy delivering complete, useful software.</p></div>
-      <div className="project-grid">{projects.map((project) => <article className="project-card reveal" key={project.title}><div className="project-visual"><span>{project.mark}</span><div className="project-shape" /></div><div className="project-info"><p>{project.type}</p><h3>{project.title}</h3><div className="tags">{project.tags.map((tag) => <span key={tag}>{tag}</span>)}</div><p className="project-description">{project.description}</p></div></article>)}</div>
+      <div className="project-grid">{projects.map((project) => <article className="project-card reveal" key={project.title}><div className="project-visual">{photos[project.slug] && <img className="project-photo" src={photos[project.slug].url} alt="" loading="lazy" />}<span>{project.mark}</span><div className="project-shape" />{photos[project.slug] && <div className="photo-credit">Photo by <a href={photos[project.slug].credit.url} target="_blank" rel="noreferrer">{photos[project.slug].credit.name}</a> on <a href={photos[project.slug].credit.providerUrl} target="_blank" rel="noreferrer">{photos[project.slug].credit.provider}</a></div>}</div><div className="project-info"><p>{project.type}</p><h3>{project.title}</h3><div className="tags">{project.tags.map((tag) => <span key={tag}>{tag}</span>)}</div><p className="project-description">{project.description}</p></div></article>)}</div>
     </section>
 
     <section className="repos section shell"><div className="section-heading reveal"><p className="eyebrow">From GitHub</p><h2>Latest things I&apos;ve<br /><em>been making.</em></h2><p>These are live public repositories from my GitHub profile, refreshed automatically.</p></div><div className="repo-grid">
       {live.repos.length ? live.repos.map((repo) => <a className="repo-card" href={repo.url} target="_blank" rel="noreferrer" key={repo.url}><div><span className="repo-dot" /><p>{repo.language}</p></div><h3>{repo.name}</h3><p className="repo-description">{repo.description}</p><footer><span>★ {repo.stars}</span><span>View repo <Arrow /></span></footer></a>) : <div className="repo-placeholder reveal"><span className="pulse-dot" /> Loading live GitHub projects...</div>}
-    </div></section>
+    </div><ContributionHeatmap /></section>
+
+    <section id="playground" className="extras section shell">
+      <div className="section-heading reveal"><p className="eyebrow">Playground</p><h2>Small things worth<br /><em>a click.</em></h2><p>Live data from public APIs: a picture from space, a quote, a joke and a cat fact. Refresh them as often as you like.</p></div>
+      <div className="extras-grid"><ApodCard /><FunCards /></div>
+    </section>
 
     <section id="about" className="about section"><div className="shell about-grid"><div className="about-copy reveal"><p className="eyebrow">A little about me</p><h2>I build with <em>curiosity</em> and care.</h2><p>I&apos;m a .NET and full-stack developer who enjoys the full journey: designing APIs, shaping data, and making interfaces feel effortless to use.</p><p>My background in intensive cross-platform development training, paired with practical work across MEAN, MERN, and .NET stacks, keeps me adaptable and grounded in real delivery.</p><a className="text-link" href="https://www.linkedin.com/in/asrafujjaman" target="_blank" rel="noreferrer">More on LinkedIn <Arrow /></a></div><div className="stats reveal"><div><strong>788<span>h</span></strong><p>intensive development training</p></div><div><strong>3<span>×</span></strong><p>full-stack technology ecosystems</p></div><div><strong>10<span>+</span></strong><p>projects brought from idea to build</p></div></div></div></section>
 
