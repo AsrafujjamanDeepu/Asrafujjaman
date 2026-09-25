@@ -91,7 +91,7 @@ export default function SkillConstellation({ skills }: { skills: ConstellationSk
           padding: 8px 14px;
           font-size: 10.5px;
           font-weight: 500;
-          color: var(--ink);
+          color: var(--ink-strong);
           background: rgba(250, 249, 245, 0.92);
           border: 1px solid rgba(19, 26, 21, 0.14);
           backdrop-filter: blur(6px);

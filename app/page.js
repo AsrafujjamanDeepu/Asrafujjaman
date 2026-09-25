@@ -2,10 +2,15 @@
 
 import { useEffect, useState } from "react";
 import { FaGithub, FaLinkedinIn, FaFacebookF, FaWhatsapp, FaTelegramPlane } from "react-icons/fa";
+import { SiGmail } from "react-icons/si";
 import SkillConstellation from "../components/SkillConstellation";
 import ContributionHeatmap from "../components/ContributionHeatmap";
 import ApodCard from "../components/ApodCard";
 import FunCards from "../components/FunCards";
+import NavBar from "../components/NavBar";
+import ScrollScenery from "../components/ScrollScenery";
+import { useLang } from "../lib/useLang";
+import { useTheme } from "../lib/useTheme";
 
 const projects = [
   { slug: "ticket-portal", href: "https://github.com/AsrafujjamanDeepu/TicketPortal", title: "Ticket Portal", type: "Full-stack booking platform", description: "A bus-ticket booking experience combining RESTful APIs with a responsive, user-focused interface.", tags: ["C#", "ASP.NET Core API", "EF Core", "Angular", "React"], mark: "01" },
@@ -67,17 +72,23 @@ const socialLinks = [
   { name: "LinkedIn", href: "https://www.linkedin.com/in/asrafujjaman", Icon: FaLinkedinIn },
   { name: "Facebook", href: "https://www.facebook.com/ZamanDeepu/", Icon: FaFacebookF },
   { name: "WhatsApp", href: "https://wa.me/8801521200643", Icon: FaWhatsapp },
-  { name: "Telegram", href: "https://t.me/ZamanDeepu", Icon: FaTelegramPlane }
+  { name: "Telegram", href: "https://t.me/ZamanDeepu", Icon: FaTelegramPlane },
+  { name: "Gmail", href: "https://mail.google.com/mail/?view=cm&fs=1&to=asrafujjamandeepu@gmail.com", Icon: SiGmail }
 ];
 
 function Arrow() { return <span aria-hidden="true" className="arrow">↗</span>; }
 
 export default function Home() {
-  const [menu, setMenu] = useState(false);
+  const [lang, toggleLang, t] = useLang();
+  const [theme, toggleTheme] = useTheme();
   const [status, setStatus] = useState("");
   const [sending, setSending] = useState(false);
   const [live, setLive] = useState({ repos: [], weather: null });
   const [photos, setPhotos] = useState({});
+
+  useEffect(() => {
+    document.documentElement.lang = lang === "bn" ? "bn" : "en";
+  }, [lang]);
 
   useEffect(() => {
     const observer = new IntersectionObserver((entries) => entries.forEach((entry) => entry.isIntersecting && entry.target.classList.add("in-view")), { threshold: 0.12 });
@@ -98,7 +109,7 @@ export default function Home() {
   async function submitForm(event) {
     event.preventDefault();
     const accessKey = process.env.NEXT_PUBLIC_WEB3FORMS_ACCESS_KEY;
-    if (!accessKey) { setStatus("The contact form is not configured yet."); return; }
+    if (!accessKey) { setStatus(t.formNotConfigured); return; }
     setSending(true); setStatus("");
     const form = event.currentTarget;
     const formData = new FormData(form);
@@ -117,78 +128,73 @@ export default function Home() {
         body: formData
       });
       const result = await response.json();
-      if (response.ok && result.success) { setStatus("Message sent - thanks for reaching out."); form.reset(); }
-      else setStatus(result.message || "Web3Forms could not send the message. Please try again.");
+      if (response.ok && result.success) { setStatus(t.formSuccess); form.reset(); }
+      else setStatus(result.message || t.formFailDefault);
     } catch (error) {
       console.error("Web3Forms submission failed:", error);
-      setStatus("The connection failed before the message could be sent. Please try again.");
+      setStatus(t.formConnFail);
     }
     finally { setSending(false); }
   }
 
   return <main className="min-h-screen overflow-x-hidden">
+    <ScrollScenery />
     <div className="grain" />
-    <nav className="nav shell" aria-label="Main navigation">
-      <a className="logo" href="#top" aria-label="Asrafujjaman home">Asrafujjaman<span>.</span></a>
-      <button className="menu-button" onClick={() => setMenu(!menu)} aria-expanded={menu}>Menu <span>+</span></button>
-      <div className={`nav-links ${menu ? "open" : ""}`}>
-        <a href="#work" onClick={() => setMenu(false)}>Work</a><a href="#about" onClick={() => setMenu(false)}>About</a><a href="#contact" onClick={() => setMenu(false)}>Contact</a>
-      </div>
-      <a className="nav-cta" href="#contact">Let&apos;s talk <Arrow /></a>
-    </nav>
+    <NavBar t={t} lang={lang} onToggleLang={toggleLang} theme={theme} onToggleTheme={toggleTheme} />
 
     <section id="top" className="hero shell">
       <div className="hero-copy reveal">
-        <p className="eyebrow"><i /> Available for opportunities</p>
-        <h1>Building digital<br /><em>experiences</em> with<br />purpose.</h1>
-        <p className="hero-intro">I&apos;m Asrafujjaman, a software developer crafting reliable full-stack applications with .NET, React, and thoughtful engineering.</p>
-        <div className="hero-actions"><a className="button primary" href="#work">Explore my work <Arrow /></a><a className="text-link" href="https://github.com/AsrafujjamanDeepu" target="_blank" rel="noreferrer">GitHub <Arrow /></a></div>
+        <p className="eyebrow"><i /> {t.heroEyebrow}</p>
+        <h1>{t.heroTitlePre}<br /><em>{t.heroTitleEm}</em><br />{t.heroTitlePost}</h1>
+        <p className="hero-intro">{t.heroIntro}</p>
+        <div className="hero-actions"><a className="button primary" href="#work">{t.heroCtaWork} <Arrow /></a><a className="text-link" href="https://github.com/AsrafujjamanDeepu" target="_blank" rel="noreferrer">{t.heroGithub} <Arrow /></a></div>
       </div>
-      <div className="portrait-wrap reveal"><div className="portrait-ring" /><div className="portrait-card"><img src="/asrafujjaman-portrait.jpg" alt="Asrafujjaman" /><div className="portrait-caption"><span>Software developer</span><b>Dhaka, Bangladesh</b></div></div><SkillConstellation skills={heroSkills} /></div>
-      <div className="hero-footer"><span>Scroll to discover</span><div className="scroll-line" /><span>01 / 05</span></div>
+      <div className="portrait-wrap reveal"><div className="portrait-ring" /><div className="portrait-card"><img src="/asrafujjaman-portrait.jpg" alt="Asrafujjaman" /><div className="portrait-caption"><span>{t.portraitRole}</span><b>{t.portraitLocation}</b></div></div><SkillConstellation skills={heroSkills} /></div>
+      <div className="hero-footer"><span>{t.heroScroll}</span><div className="scroll-line" /><span>{t.heroCounter}</span></div>
     </section>
 
     <section className="live-strip" aria-label="Live developer status"><div className="shell live-grid">
-      <div className="live-copy reveal"><p className="eyebrow"><i /> Live signal</p><h2>Currently building<br />from <em>Dhaka.</em></h2><p>Small details make a portfolio feel human. This panel updates from real developer activity and local weather.</p></div>
+      <div className="live-copy reveal"><p className="eyebrow"><i /> {t.liveEyebrow}</p><h2>{t.liveTitlePre}<br />{t.liveTitleMid ? `${t.liveTitleMid} ` : ""}<em>{t.liveTitleEm}</em></h2><p>{t.livePara}</p></div>
       <div className="weather-card reveal">
-        <div><p>Local atmosphere</p><strong>{live.weather ? `${live.weather.temperature}°` : "--°"}</strong><span>{live.weather?.condition || "Connect WeatherAPI to go live"}</span></div>
+        <div><p>{t.weatherLabel}</p><strong>{live.weather ? `${live.weather.temperature}°` : "--°"}</strong><span>{live.weather?.condition || t.weatherFallback}</span></div>
         {live.weather?.icon ? <img src={live.weather.icon} alt="Current weather" /> : <div className="weather-sun" aria-hidden="true" />}
-        <small>{live.weather ? `${live.weather.city} · ${live.weather.localTime}` : "Dhaka, Bangladesh"}</small>
+        <small>{live.weather ? `${live.weather.city} · ${live.weather.localTime}` : t.weatherLocationFallback}</small>
       </div>
     </div></section>
 
     <section id="work" className="work section shell">
-      <div className="section-heading reveal"><p className="eyebrow">Selected work</p><h2>Ideas, turned into<br /><em>working products.</em></h2><p>From server-side architecture to responsive front ends, I enjoy delivering complete, useful software.</p></div>
-      <div className="project-grid">{projects.map((project) => <article className="project-card reveal" key={project.title}><div className="project-visual">{photos[project.slug] && <img className="project-photo" src={photos[project.slug].url} alt="" loading="lazy" />}<span>{project.mark}</span><div className="project-shape" />{photos[project.slug] && <div className="photo-credit">Photo by <a href={photos[project.slug].credit.url} target="_blank" rel="noreferrer">{photos[project.slug].credit.name}</a> on <a href={photos[project.slug].credit.providerUrl} target="_blank" rel="noreferrer">{photos[project.slug].credit.provider}</a></div>}</div><div className="project-info"><p>{project.type}</p><h3><a className="project-link" href={project.href} target="_blank" rel="noreferrer">{project.title}<Arrow /></a></h3><div className="tags">{project.tags.map((tag) => <span key={tag}>{tag}</span>)}</div><p className="project-description">{project.description}</p></div></article>)}</div>
+      <div className="section-heading reveal"><p className="eyebrow">{t.workEyebrow}</p><h2>{t.workTitlePre}<br /><em>{t.workTitleEm}</em></h2><p>{t.workPara}</p></div>
+      <div className="project-grid">{projects.map((project) => { const tr = t.projects[project.slug] || project; return <article className="project-card reveal" key={project.title}><div className="project-visual">{photos[project.slug] && <img className="project-photo" src={photos[project.slug].url} alt="" loading="lazy" />}<span>{project.mark}</span><div className="project-shape" />{photos[project.slug] && <div className="photo-credit">Photo by <a href={photos[project.slug].credit.url} target="_blank" rel="noreferrer">{photos[project.slug].credit.name}</a> on <a href={photos[project.slug].credit.providerUrl} target="_blank" rel="noreferrer">{photos[project.slug].credit.provider}</a></div>}</div><div className="project-info"><p>{tr.type}</p><h3><a className="project-link" href={project.href} target="_blank" rel="noreferrer">{project.title}<Arrow /></a></h3><div className="tags">{project.tags.map((tag) => <span key={tag}>{tag}</span>)}</div><p className="project-description">{tr.description}</p></div></article>; })}</div>
     </section>
 
-    <section className="repos section shell"><div className="section-heading reveal"><p className="eyebrow">From GitHub</p><h2>Latest things I&apos;ve<br /><em>been making.</em></h2><p>These are live public repositories from my GitHub profile, refreshed automatically.</p></div><div className="repo-grid">
-      {live.repos.length ? live.repos.map((repo) => <a className="repo-card" href={repo.url} target="_blank" rel="noreferrer" key={repo.url}><div><span className="repo-dot" /><p>{repo.language}</p></div><h3>{repo.name}</h3><p className="repo-description">{repo.description}</p><footer><span>★ {repo.stars}</span><span>View repo <Arrow /></span></footer></a>) : <div className="repo-placeholder reveal"><span className="pulse-dot" /> Loading live GitHub projects...</div>}
+    <section className="repos section shell"><div className="section-heading reveal"><p className="eyebrow">{t.reposEyebrow}</p><h2>{t.reposTitlePre}<br /><em>{t.reposTitleEm}</em></h2><p>{t.reposPara}</p></div><div className="repo-grid">
+      {live.repos.length ? live.repos.map((repo) => <a className="repo-card" href={repo.url} target="_blank" rel="noreferrer" key={repo.url}><div><span className="repo-dot" /><p>{repo.language}</p></div><h3>{repo.name}</h3><p className="repo-description">{repo.description}</p><footer><span>★ {repo.stars}</span><span>{t.reposView} <Arrow /></span></footer></a>) : <div className="repo-placeholder reveal"><span className="pulse-dot" /> {t.reposLoading}</div>}
     </div><ContributionHeatmap /></section>
 
     <section id="playground" className="extras section shell">
-      <div className="section-heading reveal"><p className="eyebrow">Playground</p><h2>Small things worth<br /><em>a click.</em></h2><p>Live data from public APIs: a picture from space, a quote, a joke and a cat fact. Refresh them as often as you like.</p></div>
+      <div className="section-heading reveal"><p className="eyebrow">{t.playEyebrow}</p><h2>{t.playTitlePre}<br /><em>{t.playTitleEm}</em></h2><p>{t.playPara}</p></div>
       <div className="extras-grid"><ApodCard /><FunCards /></div>
     </section>
 
-    <section id="about" className="about section"><div className="shell about-grid"><div className="about-copy reveal"><p className="eyebrow">A little about me</p><h2>I build with <em>curiosity</em> and care.</h2><p>I&apos;m a .NET and full-stack developer who enjoys the full journey: designing APIs, shaping data, and making interfaces feel effortless to use.</p><p>My background in intensive cross-platform development training, paired with practical work across MEAN, MERN, and .NET stacks, keeps me adaptable and grounded in real delivery.</p><a className="text-link" href="https://www.linkedin.com/in/asrafujjaman" target="_blank" rel="noreferrer">More on LinkedIn <Arrow /></a></div><div className="stats reveal"><div><strong>788<span>h</span></strong><p>intensive development training</p></div><div><strong>3<span>×</span></strong><p>full-stack technology ecosystems</p></div><div><strong>10<span>+</span></strong><p>projects brought from idea to build</p></div></div></div></section>
+    <section id="about" className="about section"><div className="shell about-grid"><div className="about-copy reveal"><p className="eyebrow">{t.aboutEyebrow}</p><h2>{t.aboutTitlePre} <em>{t.aboutTitleEm}</em> {t.aboutTitlePost}</h2><p>{t.aboutPara1}</p><p>{t.aboutPara2}</p><a className="text-link" href="https://www.linkedin.com/in/asrafujjaman" target="_blank" rel="noreferrer">{t.aboutLinkedin} <Arrow /></a></div><div className="stats reveal"><div><strong>788<span>h</span></strong><p>{t.statLabel1}</p></div><div><strong>3<span>×</span></strong><p>{t.statLabel2}</p></div><div><strong>10<span>+</span></strong><p>{t.statLabel3}</p></div></div></div></section>
 
     <section className="stack section shell">
       <div className="section-heading compact reveal">
-        <p className="eyebrow">Toolbox</p>
-        <h2>The stack behind<br />the <em>craft.</em></h2>
-        <div className="stack-legend"><span><i className="legend-dot core" />Specializing in</span><span><i className="legend-dot proficient" />Also building with</span></div>
+        <p className="eyebrow">{t.stackEyebrow}</p>
+        <h2>{t.stackTitlePre}<br /><em>{t.stackTitleEm}</em></h2>
+        <div className="stack-legend"><span><i className="legend-dot core" />{t.legendCore}</span><span><i className="legend-dot proficient" />{t.legendProficient}</span></div>
       </div>
       <div className="skill-groups reveal">
         {skillGroups.map((group) => <div className="skill-group" key={group.category}>
-          <h3>{group.category}</h3>
+          <h3>{t.categories[group.category] || group.category}</h3>
           <div className="skill-pills">{group.items.map((item) => <span className={`pill pill-${item.tier}`} key={item.name}>{item.name}</span>)}</div>
         </div>)}
       </div>
     </section>
 
-    <section id="contact" className="contact"><div className="shell contact-grid"><div className="contact-intro reveal"><p className="eyebrow">Have a project in mind?</p><h2>Let&apos;s make something<br /><em>great together.</em></h2><p>Whether it&apos;s a product idea, a collaboration, or an opportunity, my inbox is open.</p><a className="email" href="mailto:asrafujjamandeepu@gmail.com">asrafujjamandeepu@gmail.com <Arrow /></a></div><form className="contact-form reveal" onSubmit={submitForm}><label>Name<input name="name" required placeholder="Your name" /></label><label>Email<input name="email" type="email" required placeholder="you@company.com" /></label><label>Message<textarea name="message" required placeholder="Tell me a little about your project..." rows="5" /></label><input type="checkbox" className="botcheck" name="botcheck" tabIndex="-1" autoComplete="off" /><button className="button primary" disabled={sending}>{sending ? "Sending..." : "Send message"} <Arrow /></button>{status && <p className="form-status" role="status">{status}</p>}</form></div></section>
+    <section id="contact" className="contact"><div className="shell contact-grid"><div className="contact-intro reveal"><p className="eyebrow">{t.contactEyebrow}</p><h2>{t.contactTitlePre}<br /><em>{t.contactTitleEm}</em></h2><p>{t.contactPara}</p><a className="email" href="mailto:asrafujjamandeepu@gmail.com">asrafujjamandeepu@gmail.com <Arrow /></a></div><form className="contact-form reveal" onSubmit={submitForm}><label>{t.formName}<input name="name" required placeholder={t.placeholderName} /></label><label>{t.formEmail}<input name="email" type="email" required placeholder={t.placeholderEmail} /></label><label>{t.formMessage}<textarea name="message" required placeholder={t.placeholderMessage} rows="5" /></label><input type="checkbox" className="botcheck" name="botcheck" tabIndex="-1" autoComplete="off" /><button className="button primary" disabled={sending}>{sending ? t.formSending : t.formSend} <Arrow /></button>{status && <p className="form-status" role="status">{status}</p>}</form></div></section>
 
-    <footer className="footer shell"><a className="logo" href="#top">Asrafujjaman<span>.</span></a><p>Designed & built by Asrafujjaman</p><div className="social-links">{socialLinks.map(({ name, href, Icon }) => <a href={href} target="_blank" rel="noreferrer" key={name} aria-label={name} title={name}><Icon /></a>)}</div></footer>
+    <footer className="footer shell" id="footer"><a className="logo" href="#top">Asrafujjaman<span>.</span></a><p>{t.footerTagline}</p><div className="social-links">{socialLinks.map(({ name, href, Icon }) => <a href={href} target="_blank" rel="noreferrer" key={name} aria-label={name} title={name}><Icon /></a>)}</div></footer>
   </main>;
 }
+

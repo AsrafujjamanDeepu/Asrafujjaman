@@ -14,9 +14,16 @@ export const metadata = {
   },
 };
 
+// Runs before paint so a returning visitor's saved theme applies
+// immediately, with no light -> dark flash on load.
+const THEME_INIT_SCRIPT = `try{var t=localStorage.getItem('theme');if(t==='dark')document.documentElement.setAttribute('data-theme','dark');}catch(e){}`;
+
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: THEME_INIT_SCRIPT }} />
+      </head>
       <body>{children}</body>
     </html>
   );
